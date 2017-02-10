@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -49,6 +50,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     LatLng center = new LatLng(42.238078, -8.718384);
     int radius = 100;
+
+    String instrucciones = "Preparado para jugar?? \n"+
+            "-Lo primero que debes hacer es activar el gps si no lo tienes activo. \n"+
+            "-Tendrás que ir a por una marca pulsando en el mapa para saber lo cerca que estas. \n"+
+            "-Cuando estés a menos de 20 metros la marca se volvera visible. \n"+
+            "-Encuentra el código QR y escanealo, para ello accede con una pulsación larga en el mapa. \n"+
+            "-Cuando lo hayas hecho pulsa en 'siguiente marca' para ir a por ella y se actualizara el mapa con una nueva pulsación. \n"+
+            "-Cuando hayas encontrado todas las marcas vuelve con el mensaje de la última. \n"+
+            "MUCHA SUERTE!!";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(marca1));
         marcaP.setVisible(false);
 
-
+        alertDialogo();
 
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -308,5 +318,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         }
+    }
+    public void alertDialogo(){
+        AlertDialog.Builder build = new AlertDialog.Builder(this);
+        build.setTitle("A POR ELLO!!");
+        build.setMessage(instrucciones);
+        build.setPositiveButton("Jugar",null);
+        build.create();
+        build.show();
     }
 }
