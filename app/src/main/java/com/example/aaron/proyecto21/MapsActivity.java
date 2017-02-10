@@ -1,6 +1,7 @@
 package com.example.aaron.proyecto21;
 
 import android.*;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -26,17 +27,28 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnMapClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, GoogleMap.OnMapClickListener,GoogleMap.OnMapLongClickListener {
 
+    public static String result="";
+    public static String distancia;
     private GoogleMap mMap;
     public static double Latitud, Longitud;
-    public static double lat2=42.23776344437179;
-    public static double lng2=-8.714438080787659;
+    public static double lat1=42.237949;//lat marca 1
+    public static double lng1=-8.717819;//long marca 1
+    public static double lat2 =42.238876 ; //lat marca 2
+    public static double lng2 =-8.71577; //long marca 2
+    public static double lat3 =42.237754 ; //latitud premio
+    public static double lng3 =-8.714418; //longitud premio
+
+    public Circle circle;
     GoogleApiClient apiClient;
     public static Marker marcaP;
     int PETICION_PERMISO_LOCALIZACION = 1;
+    public final static int cod=1;
     private static final String LOGTAG = "android-localizacion";
 
+    LatLng center = new LatLng(42.238078, -8.718384);
+    int radius = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,17 +80,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapClickListener(this);
-        // mMap.setOnMapLongClickListener(this);
 
-        // Add a marker in Sydney and move the camera
-        LatLng garaje = new LatLng(lat2, lng2);
-        marcaP = mMap.addMarker(new MarkerOptions().position(garaje).title("GARAJE TITO"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(garaje));
+        mMap.setOnMapLongClickListener(this);
+
+
+        LatLng marca1 = new LatLng(lat1, lng1);
+        marcaP = mMap.addMarker(new MarkerOptions().position(marca1).title("PRIMERA MARCA, BUSCA QR"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(marca1));
         marcaP.setVisible(false);
 
 
-        LatLng center = new LatLng(42.23781755753058, -8.713343739509583);
-        int radius = 100;
+
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -121,17 +133,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void calcularDis(){
         double earthRadius = 6372.795477598;
 
-        double dLat = Math.toRadians(Latitud-lat2);
-        double dLng = Math.toRadians(Longitud-lng2);
+        double dLat = Math.toRadians(Latitud-lat1);
+        double dLng = Math.toRadians(Longitud-lng1);
         double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(Latitud)) *
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(Latitud)) *
                         Math.sin(dLng/2) * Math.sin(dLng/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         double dist = earthRadius * c;
         double distMet=dist*1000;
-        String distancia=String.valueOf(distMet);
+        int distCort=(int) distMet;
+        distancia=String.valueOf(distMet);
 
-        Toast.makeText(this, distancia+" metros", Toast.LENGTH_LONG).show();
+
 
         if(distMet<=20){
             marcaP.setVisible(true);
@@ -223,7 +236,77 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateUI(lastLocation);
         calcularDis();
 
+        if(result.equals("")){
+            Toast.makeText(this, distancia + " metros ", Toast.LENGTH_SHORT).show();
+        }
+        if(result.equals("marca")){
+            double latC2= 42.238832;
+            double longC2=-8.715266;
+            circle.setVisible(false);
+            LatLng center = new LatLng(latC2, longC2);
+            int radius = 100;
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(center)
+                    .radius(radius)
+                    .strokeColor(Color.parseColor("#0D47A1"))
+                    .strokeWidth(4)
+                    .fillColor(Color.argb(32, 33, 150, 243));
+            circle = mMap.addCircle(circleOptions);
+            LatLng marca2 = new LatLng(lat2, lng2);
+            lat1 = lat2;
+            lng1 = lng2;
+            marcaP.remove();
+            marcaP = mMap.addMarker(new MarkerOptions().position(marca2).title("SEGUNDA MARCA, BUSCA QR"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(marca2));
+            marcaP.setVisible(false);
+
+            Toast.makeText(this, "PULSA PARA SIGUIENTE DISTANCIA", Toast.LENGTH_SHORT).show();
+            result = "";
+
+
+        }
+        if (result.equals("premio")) {
+            double latC2=42.23781755753058;
+            double lngC2= -8.713343739509583;
+            circle.setVisible(false);
+            LatLng center = new LatLng(latC2, lngC2);
+            int radius = 100;
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(center)
+                    .radius(radius)
+                    .strokeColor(Color.parseColor("#0D47A1"))
+                    .strokeWidth(4)
+                    .fillColor(Color.argb(32, 33, 150, 243));
+
+            circle = mMap.addCircle(circleOptions);
+            LatLng premio = new LatLng(lat3, lng3);
+            lat1 = lat3;
+            lng1 = lng3;
+            marcaP.remove();
+            marcaP = mMap.addMarker(new MarkerOptions().position(premio).title("ULTIMA MARCA, BUSCA QR"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(premio));
+            marcaP.setVisible(false);
+            Toast.makeText(this, "PULSA PARA ÚLTIMA DISTANCIA", Toast.LENGTH_SHORT).show();
+            result = "";
+        }
+
 
     }
 
+    public void onMapLongClick(LatLng latLng) {
+        Intent intent = new Intent(this, codigoQR.class);
+        startActivityForResult(intent,cod);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+
+        if(requestCode == cod){
+            if(resultCode == RESULT_OK){
+                result=data.getStringExtra("marca2");
+
+            }
+        }
+    }
 }
