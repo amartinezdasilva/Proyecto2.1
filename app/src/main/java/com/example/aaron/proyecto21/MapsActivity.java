@@ -117,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .strokeWidth(4)
                 .fillColor(Color.argb(32, 33, 150, 243));
 
-        Circle circle = mMap.addCircle(circleOptions);
+         circle = mMap.addCircle(circleOptions);
     }
 
 

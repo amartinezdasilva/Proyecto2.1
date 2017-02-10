@@ -21,7 +21,7 @@ import com.example.aaron.proyecto21.carpetaQR.IntentResult;
 public class codigoQR extends AppCompatActivity {
 
     public static String marca2;
-    public String finalJuego="FELICIDADEEEES!!, HAS COMPLETADO EL JUEGO";
+    public String finalJuego=" HAS COMPLETADO EL JUEGO, VUELVE CON DAMIÁN";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +79,7 @@ public class codigoQR extends AppCompatActivity {
 
     private void updateUITextViews(String scan_result, String scan_result_format) {
         final TextView tvResult =(TextView)findViewById(R.id.tvResult);
-
+        marca2=scan_result;
         tvResult.setText(scan_result);
         Linkify.addLinks(tvResult, Linkify.ALL);
     }
